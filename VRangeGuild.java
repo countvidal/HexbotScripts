@@ -109,7 +109,7 @@ public class VRangeGuild extends Employer implements RenderEvent, MessageEvent,
 
 		price = (int) item.getAverage();
 		System.out.println(Integer.toString(price));
-
+        context.mouse.setSpeed(Mouse.Speed.FAST);
 		startTime = System.currentTimeMillis();
 		startExp = context.skills.getCurrentExp(context.skills.RANGE);
 
@@ -239,7 +239,7 @@ public class VRangeGuild extends Employer implements RenderEvent, MessageEvent,
 		if (expPerHour > 0) {
 			timeToLvl = expLeft / expPerHour;
 			g2d.drawString(
-					String.format("%,f", expPerHour) + " | "
+					String.format("%,.2f", expPerHour) + " | "
 							+ df.format(timeToLvl) + " Hrs to lvl.", 335, 420);
 		}
 
@@ -372,13 +372,6 @@ public class VRangeGuild extends Employer implements RenderEvent, MessageEvent,
 				Time.sleep(800, 900);
 			}
 
-			final int CONTINUE = 241;
-			WidgetComponent continues = context.widgets.getChild(CONTINUE, 3);
-			if (continues != null && continues.isVisible()) {
-				continues.click();
-				Time.sleep(800, 900);
-			}
-
 			final int CONTINUE2 = 64;
 			WidgetComponent continues2 = context.widgets.getChild(CONTINUE2, 3);
 			if (continues2 != null && continues2.isVisible()) {
@@ -386,9 +379,16 @@ public class VRangeGuild extends Employer implements RenderEvent, MessageEvent,
 				Time.sleep(800, 900);
 			}
 
-			if (continues2 == null && continues == null && sure == null
-					&& judge == null) {
-				Npc judges = context.npcs.getNearest(5329);
+            final int CONTINUE = 241;
+            WidgetComponent continues = context.widgets.getChild(CONTINUE, 3);
+            if (continues != null && continues.isVisible()) {
+                continues.click();
+                Time.sleep(800, 900);
+            }
+
+			if (!continues2.isVisible() && !continues.isVisible() && !sure.isVisible()
+					&& !judge.isVisible()) {
+				Npc judges = context.npcs.getNearest(5809);
 				judges.click();
 			}
 			return;
@@ -447,7 +447,7 @@ public class VRangeGuild extends Employer implements RenderEvent, MessageEvent,
 		@Override
 		public void work() {
 			process = "Shooting Target";
-			GameObject target = context.gameObjects.getNearest(21280);
+			GameObject target = context.gameObjects.getNearest(23940);
 			if (target == null) {
 				return;
 			}
@@ -463,7 +463,7 @@ public class VRangeGuild extends Employer implements RenderEvent, MessageEvent,
 		@Override
 		public boolean validate() {
 			return getArrowNum() > 0 && getArrowNum() < 11
-					&& context.widgets.getChild(325, 89) == null;
+					&& !context.widgets.getChild(325, 89).isVisible();
 		}
 
 	}
@@ -484,7 +484,7 @@ public class VRangeGuild extends Employer implements RenderEvent, MessageEvent,
 		@Override
 		public boolean validate() {
 			return getArrowNum() > 0
-					&& context.widgets.getChild(325, 89) != null;
+					&& context.widgets.getChild(325, 88).isVisible();
 		}
 
 	}
@@ -498,7 +498,7 @@ public class VRangeGuild extends Employer implements RenderEvent, MessageEvent,
 		@Override
 		public void work() {
 			process = "Getting Prize";
-			Npc judge = context.npcs.getNearest(5329);
+			Npc judge = context.npcs.getNearest(5809);
 			if (judge == null) {
 				return;
 			}
@@ -513,7 +513,7 @@ public class VRangeGuild extends Employer implements RenderEvent, MessageEvent,
 		@Override
 		public boolean validate() {
 			return getArrowNum() == 11
-					&& context.widgets.getChild(325, 89) == null;
+					&& !context.widgets.getChild(325, 89).isVisible();
 		}
 
 	}

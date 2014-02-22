@@ -67,6 +67,7 @@ import util.ExchangeParser;
 @ScriptManifest(author = "countvidal", description = "Bots Ranging Competition at Range Guild", name = "Vidals Guild Ranger", category = Category.RANGED)
 public class VRangeGuild extends Employer implements RenderEvent, MessageEvent,
 		MouseMotionListener {
+//this is swag
 
 	public VRangeGuild(MethodContext context) {
 		super(context);

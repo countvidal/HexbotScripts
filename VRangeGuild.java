@@ -392,7 +392,7 @@ public class VRangeGuild extends Employer implements RenderEvent, MessageEvent,
 
 			if (!continues2.isVisible() && !continues.isVisible() && !sure.isVisible()
 					&& !judge.isVisible()) {
-				Npc judges = context.npcs.getNearest(5809);
+				Npc judges = context.npcs.getNearest("Competition Judge");
 				judges.click();
 			}
 			return;
@@ -451,7 +451,7 @@ public class VRangeGuild extends Employer implements RenderEvent, MessageEvent,
 		@Override
 		public void work() {
 			process = "Shooting Target";
-			GameObject target = context.gameObjects.getNearest(23940);
+			GameObject target = context.gameObjects.getNearest("Target");
 			if (target == null) {
 				return;
 			}
@@ -502,7 +502,7 @@ public class VRangeGuild extends Employer implements RenderEvent, MessageEvent,
 		@Override
 		public void work() {
 			process = "Getting Prize";
-			Npc judge = context.npcs.getNearest(5809);
+			Npc judge = context.npcs.getNearest("Competition Judge");
 			if (judge == null) {
 				return;
 			}

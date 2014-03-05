@@ -840,9 +840,9 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
             "Raw swordfish", // swordy
             "Raw trout", // trout
             "Raw tuna", // tuna
-            //11328, // leaping trout
-            //11332, // leaping sturgeon
-           // 11330 // leaping salmon
+            "Leaping trout", // leaping trout
+            "Leaping sturgeon", // leaping sturgeon
+           "Leaping salmon" // leaping salmon
     };
 
     private long timeToNext;

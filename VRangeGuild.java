@@ -266,7 +266,12 @@ public class VRangeGuild extends Employer implements RenderEvent, MessageEvent,
 		}
 	}
 
-	public abstract class WorkerGroup extends Worker {
+    @Override
+    public void onMessageReceived(int i, String s, String s2) {
+
+    }
+
+    public abstract class WorkerGroup extends Worker {
 
 		private Worker[] workers;
 
@@ -517,10 +522,6 @@ public class VRangeGuild extends Employer implements RenderEvent, MessageEvent,
 
 	}
 
-	@Override
-	public void onMessageReceived(int arg0, String arg1) {
-		// TODO Auto-generated method stub
 
-	}
 
 }

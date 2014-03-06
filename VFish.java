@@ -1224,7 +1224,8 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                 }
                 break;
             case LOOKING:
-                if ((fishingSpotNpc = getBestFishingSpot(fishingAction)) != Npc.EMPTY) {
+                fishingSpotNpc = getBestFishingSpot(fishingAction);
+                if (fishingSpotNpc != Npc.EMPTY && fishingSpotNpc != null) {
                     fishingSpotLocation = fishingSpotNpc.getLocation();
                     if (!fishingSpotNpc.isVisible() && fishingSpotNpc != Npc.EMPTY) {
                         context.camera.turnTo(fishingSpotNpc);
@@ -1236,8 +1237,9 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                     } else {
                         state = STARTING_FISHING;
                     }
-                }
-                else if (!fishingArea.contains(context.players.getLocal())) {
+                }  else if (fishingArea.contains(context.players.getLocal())) {
+                    context.walking.walk(fishingArea.getCentralTile());
+                }  else if (!fishingArea.contains(context.players.getLocal())) {
                     context.walking.walk(fishingArea.getCentralTile());
                 }
                 break;

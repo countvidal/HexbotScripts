@@ -11,6 +11,7 @@ import org.hexbot.api.util.Filter;
 import org.hexbot.api.util.Random;
 import org.hexbot.api.util.Time;
 import org.hexbot.api.wrapper.*;
+import org.hexbot.api.wrapper.Character;
 import org.hexbot.script.AbstractScript;
 import org.hexbot.script.Category;
 import org.hexbot.script.ScriptManifest;
@@ -1082,7 +1083,12 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
     }
 
     public boolean hasSpotMoved() {
-        if (fishingSpotNpc == null || fishingSpotLocation == null) {
+        Character bram = context.players.getLocal().getInteracting();
+        int ID =  bram instanceof Npc ? ((Npc) bram).getId() : -1;
+        if(ID != fishingSpotID && ID != -1){
+            return true;
+        }
+        if (fishingSpotNpc == Npc.EMPTY || fishingSpotLocation == Tile.EMPTY) {
             return true;
         }
         return !fishingSpotNpc.getLocation().equals(fishingSpotLocation);
@@ -1147,17 +1153,17 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
             return 500;
         }
         if (timerUsed && timePassed(timeToStop)) {
-            return stopScript("Time passed.", true);
+           stopScript("Time passed.", true);
         }
         if (!barbarianMode && gear != null) {
-            if (context.inventory.getCount(gear[0]) == 0
-                    && (!(context.equipment.getItem(Equipment.Slot.WEAPON).getId() == 14109 || context.equipment.getItem(Equipment.Slot.WEAPON).getId() == 10129) || gear != HARP_FISHING)
+            if ((context.inventory.getCount(gear[0]) == 0
+                    && (!(context.equipment.getItem(Equipment.Slot.WEAPON).getId() == 14109 || context.equipment.getItem(Equipment.Slot.WEAPON).getId() == 10129) || gear != HARP_FISHING))
                     || gear.length > 1 && !hasBait()) {
-                return stopScript("Out of fishing supplies.", true);
+                stopScript("Out of fishing supplies.", true);
             }
         }
         if (stopScript) {
-            return stopScript("Script ended.", false);
+            stopScript("Script ended.", false);
         }
         if (context.bank.isOpen() && state != WALKING_FROM_BANK) {
             state = BANKING;
@@ -1208,9 +1214,9 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
             case LOOKING:
                 if ((fishingSpotNpc = getBestFishingSpot(fishingAction)) != null) {
                     fishingSpotLocation = fishingSpotNpc.getLocation();
-                    if (!fishingSpotLocation.getMatrix(context).isVisible()) {
-                        context.camera.turnTo(fishingSpotLocation);
-                        if (!fishingSpotLocation.getMatrix(context).isVisible()) {
+                    if (!fishingSpotNpc.isVisible()) {
+                        context.camera.turnTo(fishingSpotNpc);
+                        if (!fishingSpotNpc.isVisible()) {
                             state = WALKING_TO_FISHING_SPOT;
                         } else {
                             state = STARTING_FISHING;
@@ -1241,9 +1247,9 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                     actHuman();
                     return 15;
                 }
-                if (!fishingSpotLocation.getMatrix(context).isVisible()) {
-                    context.camera.turnTo(fishingSpotLocation);
-                    if (!fishingSpotLocation.getMatrix(context).isVisible()) {
+                if (!fishingSpotNpc.isVisible()) {
+                    context.camera.turnTo(fishingSpotNpc);
+                    if (!fishingSpotNpc.isVisible()) {
                         state = LOOKING;
                         break;
                     }
@@ -1251,7 +1257,6 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                 if (fishingSpotNpc.interact(fishingAction)
                        // + " Fishing spot")
                         && context.calculations.distanceTo(fishingSpotLocation) == 1) {
-                    System.out.println(fishingAction);
                     waitToStop();
                     state = FISHING;
                     failedFishingSpotClickAttempts = 0;
@@ -1752,7 +1757,7 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
         return ret;
     }
 
-    private int stopScript(final String reason, final boolean logout) {
+    private void stopScript(final String reason, final boolean logout) {
         if (logout) {
             System.out.println(reason + " Stopping script and logging out.");
             while (context.bank.isOpen()) {
@@ -1765,7 +1770,6 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
             System.out.println(reason + " Stopping script.");
         }
         stop();
-        return -1;
     }
 
 

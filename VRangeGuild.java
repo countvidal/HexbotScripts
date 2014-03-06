@@ -66,322 +66,322 @@ import util.ExchangeParser;
 
 @ScriptManifest(author = "countvidal", description = "Bots Ranging Competition at Range Guild", name = "Vidals Guild Ranger", category = Category.RANGED)
 public class VRangeGuild extends Employer implements RenderEvent, MessageEvent,
-		MouseMotionListener {
+        MouseMotionListener {
 
-	public VRangeGuild(MethodContext context) {
-		super(context);
-	}
+    // Paint
+    private static final String PAINT_IMAGE_URL = "http://i.imgur.com/aEDg8dX.png";
+    int once = 0;
+    String process = "Null";
+    private BufferedImage paintImage = null;
+    // paint related variables
+    private long startTime;
+    private long timeRunning;
+    private int startExp;
+    private int gainedExp;
+    private boolean closePaint = false;
+    private boolean startScript = false;
+    private int price;
+    private int starttickets;
 
-	// Paint
-	private static final String PAINT_IMAGE_URL = "http://i.imgur.com/aEDg8dX.png";
-	private BufferedImage paintImage = null;
-	// paint related variables
-	private long startTime;
-	private long timeRunning;
-	private int startExp;
-	private int gainedExp;
-	private boolean closePaint = false;
-	private boolean startScript = false;
-	int once = 0;
-	private int price;
-	private int starttickets;
-	String process = "Null";
+    public VRangeGuild(MethodContext context) {
+        super(context);
+    }
 
-	@Override
-	public void onStart() {
-		submit(new StartGame(context), new PlayGame(context,new EquipArrows(context),
-				new ShootTarget(context), new CloseTarget(context),
-				new GetPrize(context)), new ReturnToSpot(context));
-		loadImage();
-		if (context.inventory.contains(1464)) {
-			starttickets = context.inventory.getItem(1464).getStackSize();
-		} else {
-			starttickets = 0;
-		}
+    /**
+     * Substitutes 000000 for M
+     *
+     * @return String Number with M
+     */
+    private static String millValue(final int value) {
+        if (value >= 1000000) {
+            return Integer.toString(value / 1000000) + "M";
+        } else {
+            return Integer.toString(value / 1000) + "K";
+        }
+    }
 
-		if (!context.inventory.contains(995)) {
-			System.out.println("No coins in inventory stopping.");
-			stop();
-		}
+    @Override
+    public void onStart() {
+        submit(new StartGame(context), new PlayGame(context, new EquipArrows(context),
+                new ShootTarget(context), new CloseTarget(context),
+                new GetPrize(context)), new ReturnToSpot(context));
+        loadImage();
+        if (context.inventory.contains(1464)) {
+            starttickets = context.inventory.getItem(1464).getStackSize();
+        } else {
+            starttickets = 0;
+        }
 
-		ExchangeItem item = ExchangeParser.lookup("Rune arrows", true);
+        if (!context.inventory.contains(995)) {
+            System.out.println("No coins in inventory stopping.");
+            stop();
+        }
 
-		price = (int) item.getAverage();
-		System.out.println(Integer.toString(price));
+        ExchangeItem item = ExchangeParser.lookup("Rune arrows", true);
+
+        price = (int) item.getAverage();
+        System.out.println(Integer.toString(price));
         context.mouse.setSpeed(Mouse.Speed.FAST);
-		startTime = System.currentTimeMillis();
-		startExp = context.skills.getCurrentExp(context.skills.RANGE);
+        startTime = System.currentTimeMillis();
+        startExp = context.skills.getCurrentExp(context.skills.RANGE);
 
-	}
+    }
 
-	@Override
-	public void mouseDragged(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+    @Override
+    public void mouseDragged(MouseEvent arg0) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	@Override
-	public void mouseMoved(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+    @Override
+    public void mouseMoved(MouseEvent arg0) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	private void updateStats() {
+    private void updateStats() {
 
-		timeRunning = System.currentTimeMillis() - startTime;
-		gainedExp = context.skills.getCurrentExp(context.skills.RANGE)
-				- startExp;
+        timeRunning = System.currentTimeMillis() - startTime;
+        gainedExp = context.skills.getCurrentExp(context.skills.RANGE)
+                - startExp;
 
-	}
+    }
 
-	private void loadImage() {
-		try {
-			URL painImageUrl = new URL(PAINT_IMAGE_URL);
-			paintImage = ImageIO.read(painImageUrl);
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.out.println("Could not get paintImage");
-		}
+    private void loadImage() {
+        try {
+            URL painImageUrl = new URL(PAINT_IMAGE_URL);
+            paintImage = ImageIO.read(painImageUrl);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println("Could not get paintImage");
+        }
 
-	}
+    }
 
-	@Override
-	public void onRender(Graphics g) {
+    @Override
+    public void onRender(Graphics g) {
 
-		Graphics2D g2d = (Graphics2D) g.create();
-		// drawing mouse
-		drawMouse(g);
+        Graphics2D g2d = (Graphics2D) g.create();
+        // drawing mouse
+        drawMouse(g);
 
-		if (context.mouse.getX() >= 483 && context.mouse.getX() <= 507
-				&& context.mouse.getY() >= 344 && context.mouse.getY() <= 368) {
-			if (closePaint && once == 0) {
-				closePaint = false;
-				once = 1;
-			} else if (once == 0) {
-				closePaint = true;
-				once = 1;
-			}
-		} else {
-			once = 0;
-		}
+        if (context.mouse.getX() >= 483 && context.mouse.getX() <= 507
+                && context.mouse.getY() >= 344 && context.mouse.getY() <= 368) {
+            if (closePaint && once == 0) {
+                closePaint = false;
+                once = 1;
+            } else if (once == 0) {
+                closePaint = true;
+                once = 1;
+            }
+        } else {
+            once = 0;
+        }
 
-		// drawing paint
+        // drawing paint
 
-		if (paintImage != null && !closePaint) {
-			drawPaint(g2d);
-		}
+        if (paintImage != null && !closePaint) {
+            drawPaint(g2d);
+        }
 
-		g2d.dispose();
+        g2d.dispose();
 
-	}
+    }
 
-	public void drawMouse(Graphics g) {
+    public void drawMouse(Graphics g) {
 
-		Graphics2D g2d = (Graphics2D) g.create();
+        Graphics2D g2d = (Graphics2D) g.create();
 
-		g2d.setColor(Color.CYAN);
-		int x = context.mouse.getX();
-		int y = context.mouse.getY();
-		g2d.drawLine(x - 5, y - 5, x + 5, y + 5);
-		g2d.drawLine(x - 5, y + 5, x + 5, y - 5);
-		g2d.drawString("(" + context.mouse.getX() + "," + context.mouse.getY()
-				+ ")", x + 10, y + 10);
+        g2d.setColor(Color.CYAN);
+        int x = context.mouse.getX();
+        int y = context.mouse.getY();
+        g2d.drawLine(x - 5, y - 5, x + 5, y + 5);
+        g2d.drawLine(x - 5, y + 5, x + 5, y - 5);
+        g2d.drawString("(" + context.mouse.getX() + "," + context.mouse.getY()
+                + ")", x + 10, y + 10);
 
-		g2d.dispose();
+        g2d.dispose();
 
-	}
+    }
 
-	private void drawPaint(Graphics2D g2d) {
+    private void drawPaint(Graphics2D g2d) {
 
-		updateStats();
+        updateStats();
 
-		// paint the image
-		g2d.drawImage(paintImage, 3, 330, null);
+        // paint the image
+        g2d.drawImage(paintImage, 3, 330, null);
 
-		// paint expGained
-		g2d.drawString(
-				String.format("%,d", gainedExp)
-						+ " | "
-						+ String.format(
-								"%,d",
-								(Skills.getExperienceAt(context.skills
-										.getCurrentLevel(context.skills.RANGE) + 1) - context.skills
-										.getCurrentExp(context.skills.RANGE)))
-						+ " XP to LvL", 342, 398);
+        // paint expGained
+        g2d.drawString(
+                String.format("%,d", gainedExp)
+                        + " | "
+                        + String.format(
+                        "%,d",
+                        (Skills.getExperienceAt(context.skills
+                                .getCurrentLevel(context.skills.RANGE) + 1) - context.skills
+                                .getCurrentExp(context.skills.RANGE)))
+                        + " XP to LvL", 342, 398);
 
-		// paint time running
-		int seconds = (int) (timeRunning / 1000) % 60;
-		int minutes = (int) (timeRunning / 60000) % 60;
-		int hours = (int) timeRunning / 1000 / 60 / 60;
-		String timeRunningString = String.format("%02dh:%02dm:%02ds", hours,
-				minutes, seconds);
-		g2d.drawString(timeRunningString, 325, 438);
+        // paint time running
+        int seconds = (int) (timeRunning / 1000) % 60;
+        int minutes = (int) (timeRunning / 60000) % 60;
+        int hours = (int) timeRunning / 1000 / 60 / 60;
+        String timeRunningString = String.format("%02dh:%02dm:%02ds", hours,
+                minutes, seconds);
+        g2d.drawString(timeRunningString, 325, 438);
 
-		// paint exp per hour
-		int expPerSecond = 0;
-		if (timeRunning > 0) {
-			if (seconds < 5 && minutes <= 0 && hours <= 0) {
-				expPerSecond = 5;
-			} else {
-				expPerSecond = gainedExp / (int) (timeRunning / 1000);
-			}
-		}
+        // paint exp per hour
+        int expPerSecond = 0;
+        if (timeRunning > 0) {
+            if (seconds < 5 && minutes <= 0 && hours <= 0) {
+                expPerSecond = 5;
+            } else {
+                expPerSecond = gainedExp / (int) (timeRunning / 1000);
+            }
+        }
 
-		double expPerHour = expPerSecond * 60 * 60;
-		// System.out.println(Integer.toString(expPerHour));
-		double expLeft = (double) Skills.getExperienceAt(context.skills
-				.getCurrentLevel(context.skills.RANGE) + 1)
-				- context.skills.getCurrentExp(context.skills.RANGE);
-		DecimalFormat df = new DecimalFormat("#.##");
-		double timeToLvl = 0.00;
-		if (expPerHour > 0) {
-			timeToLvl = expLeft / expPerHour;
-			g2d.drawString(
-					String.format("%,.2f", expPerHour) + " | "
-							+ df.format(timeToLvl) + " Hrs to lvl.", 335, 420);
-		}
+        double expPerHour = expPerSecond * 60 * 60;
+        // System.out.println(Integer.toString(expPerHour));
+        double expLeft = (double) Skills.getExperienceAt(context.skills
+                .getCurrentLevel(context.skills.RANGE) + 1)
+                - context.skills.getCurrentExp(context.skills.RANGE);
+        DecimalFormat df = new DecimalFormat("#.##");
+        double timeToLvl = 0.00;
+        if (expPerHour > 0) {
+            timeToLvl = expLeft / expPerHour;
+            g2d.drawString(
+                    String.format("%,.2f", expPerHour) + " | "
+                            + df.format(timeToLvl) + " Hrs to lvl.", 335, 420);
+        }
 
-		g2d.drawString(process, 99, 435);
+        g2d.drawString(process, 99, 435);
 
-		g2d.drawString(Integer.toString(getCurrentScore()) + " | "
-				+ getTargetColor(), 110, 397);
-		int tickets = context.inventory.getItem(1464).getStackSize()
-				- starttickets;
-		int arrows = tickets / 40;
-		g2d.drawString(millValue(price * arrows), 83, 418);
+        g2d.drawString(Integer.toString(getCurrentScore()) + " | "
+                + getTargetColor(), 110, 397);
+        int tickets = context.inventory.getItem(1464).getStackSize()
+                - starttickets;
+        int arrows = tickets / 40;
+        g2d.drawString(millValue(price * arrows), 83, 418);
 
-	}
-
-	/**
-	 * Substitutes 000000 for M
-	 * 
-	 * @return String Number with M
-	 */
-	private static String millValue(final int value) {
-		if (value >= 1000000) {
-			return Integer.toString(value / 1000000) + "M";
-		} else {
-			return Integer.toString(value / 1000) + "K";
-		}
-	}
+    }
 
     @Override
     public void onMessageReceived(int i, String s, String s2) {
 
     }
 
+    public boolean isInGame() {
+        return getArrowNum() > 0;
+    }
+
+    public int getArrowNum() {
+        return context.settings.getAt(156);
+    }
+
+    public int getCurrentScore() {
+        return context.settings.getAt(157);
+    }
+
+    public String getTargetColor() {
+        int c = context.settings.getAt(158);
+        if (c == 9 || c == 10) {
+            return "Black";
+        } else if (c == 5 || c == 7 || c == 8) {
+            return "Blue";
+        } else if (c == 1) {
+            return "Yellow";
+        } else if (c == 2 || c == 3 || c == 4) {
+            return "Red";
+        } else if (c == 0) {
+            return "Bulls Eye";
+        } else if (c == 1) {
+            return "Missed";
+        }
+        return "";
+    }
+
     public abstract class WorkerGroup extends Worker {
 
-		private Worker[] workers;
+        private Worker[] workers;
 
-		public WorkerGroup(MethodContext context, Worker... workers) {
-			super(context);
-			this.workers = workers;
-		}
+        public WorkerGroup(MethodContext context, Worker... workers) {
+            super(context);
+            this.workers = workers;
+        }
 
-		public abstract boolean activate();
+        public abstract boolean activate();
 
-		public void work() {
-			for (Worker worker : workers) {
-				if (worker.validate()) {
-					worker.work();
-				}
-			}
-		}
+        public void work() {
+            for (Worker worker : workers) {
+                if (worker.validate()) {
+                    worker.work();
+                }
+            }
+        }
 
-		public boolean validate() {
-			return activate();
-		}
-	}
+        public boolean validate() {
+            return activate();
+        }
+    }
 
-	public boolean isInGame() {
-		return getArrowNum() > 0;
-	}
+    private class ReturnToSpot extends Worker {
 
-	public int getArrowNum() {
-		return context.settings.getAt(156);
-	}
+        Area arena = new Area(new Tile(2667, 3417), new Tile(2672, 3421),
+                new Tile(2675, 3418), new Tile(2672, 3413));
 
-	public int getCurrentScore() {
-		return context.settings.getAt(157);
-	}
+        public ReturnToSpot(MethodContext context) {
+            super(context);
+            // TODO Auto-generated constructor stub
+        }
 
-	public String getTargetColor() {
-		int c = context.settings.getAt(158);
-		if (c == 9 || c == 10) {
-			return "Black";
-		} else if (c == 5 || c == 7 || c == 8) {
-			return "Blue";
-		} else if (c == 1) {
-			return "Yellow";
-		} else if (c == 2 || c == 3 || c == 4) {
-			return "Red";
-		} else if (c == 0) {
-			return "Bulls Eye";
-		} else if (c == 1) {
-			return "Missed";
-		}
-		return "";
-	}
+        @Override
+        public void work() {
+            if (context.walking.walk(arena.getCentralTile())) {
+                Time.sleep(1000, 1200);
+            }
+        }
 
-	private class ReturnToSpot extends Worker {
+        @Override
+        public boolean validate() {
+            // TODO Auto-generated method stub
+            return isInGame() && !arena.contains(context.players.getLocal());
+        }
 
-		public ReturnToSpot(MethodContext context) {
-			super(context);
-			// TODO Auto-generated constructor stub
-		}
+    }
 
-		Area arena = new Area(new Tile(2667, 3417), new Tile(2672, 3421),
-				new Tile(2675, 3418), new Tile(2672, 3413));
+    private class StartGame extends Worker {
+        public StartGame(MethodContext context) {
+            super(context);
+            // TODO Auto-generated constructor stub
+        }
 
-		@Override
-		public void work() {
-			if (context.walking.walk(arena.getCentralTile())) {
-				Time.sleep(1000, 1200);
-			}
-		}
+        @Override
+        public void work() {
+            process = "Starting Game";
+            final int PARENT_JUDGE = 242;
+            WidgetComponent judge = context.widgets.getChild(PARENT_JUDGE, 1);
+            if (judge != null && judge.isVisible()) {
+                WidgetComponent toClick = context.widgets.getChild(
+                        PARENT_JUDGE, 4);
+                if (toClick != null && toClick.isVisible()) {
+                    toClick.click();
+                    Time.sleep(800, 900);
+                }
+            }
+            final int SURE = 230;
+            WidgetComponent sure = context.widgets.getChild(SURE, 1);
+            if (sure != null && sure.isVisible()) {
+                sure.click();
+                Time.sleep(800, 900);
+            }
 
-		@Override
-		public boolean validate() {
-			// TODO Auto-generated method stub
-			return isInGame() && !arena.contains(context.players.getLocal());
-		}
-
-	}
-
-	private class StartGame extends Worker {
-		public StartGame(MethodContext context) {
-			super(context);
-			// TODO Auto-generated constructor stub
-		}
-
-		@Override
-		public void work() {
-			process = "Starting Game";
-			final int PARENT_JUDGE = 242;
-			WidgetComponent judge = context.widgets.getChild(PARENT_JUDGE, 1);
-			if (judge != null && judge.isVisible()) {
-				WidgetComponent toClick = context.widgets.getChild(
-						PARENT_JUDGE, 4);
-				if (toClick != null && toClick.isVisible()) {
-					toClick.click();
-					Time.sleep(800, 900);
-				}
-			}
-			final int SURE = 230;
-			WidgetComponent sure = context.widgets.getChild(SURE, 1);
-			if (sure != null && sure.isVisible()) {
-				sure.click();
-				Time.sleep(800, 900);
-			}
-
-			final int CONTINUE2 = 64;
-			WidgetComponent continues2 = context.widgets.getChild(CONTINUE2, 3);
-			if (continues2 != null && continues2.isVisible()) {
-				continues2.click();
-				Time.sleep(800, 900);
-			}
+            final int CONTINUE2 = 64;
+            WidgetComponent continues2 = context.widgets.getChild(CONTINUE2, 3);
+            if (continues2 != null && continues2.isVisible()) {
+                continues2.click();
+                Time.sleep(800, 900);
+            }
 
             final int CONTINUE = 241;
             WidgetComponent continues = context.widgets.getChild(CONTINUE, 3);
@@ -390,138 +390,137 @@ public class VRangeGuild extends Employer implements RenderEvent, MessageEvent,
                 Time.sleep(800, 900);
             }
 
-			if (!continues2.isVisible() && !continues.isVisible() && !sure.isVisible()
-					&& !judge.isVisible()) {
-				Npc judges = context.npcs.getNearest("Competition Judge");
-				judges.click();
-			}
-			return;
-		}
+            if (!continues2.isVisible() && !continues.isVisible() && !sure.isVisible()
+                    && !judge.isVisible()) {
+                Npc judges = context.npcs.getNearest("Competition Judge");
+                judges.click();
+            }
+            return;
+        }
 
-		@Override
-		public boolean validate() {
-			return !isInGame();
-		}
+        @Override
+        public boolean validate() {
+            return !isInGame();
+        }
 
-	}
+    }
 
-	private class PlayGame extends WorkerGroup {
-		Area arena = new Area(new Tile(2667, 3417), new Tile(2672, 3421),
-				new Tile(2675, 3418), new Tile(2672, 3413));
+    private class PlayGame extends WorkerGroup {
+        Area arena = new Area(new Tile(2667, 3417), new Tile(2672, 3421),
+                new Tile(2675, 3418), new Tile(2672, 3413));
 
-		public PlayGame(MethodContext ctx, Worker... workers) {
-			super(ctx, workers);
-		}
+        public PlayGame(MethodContext ctx, Worker... workers) {
+            super(ctx, workers);
+        }
 
-		@Override
-		public boolean activate() {
-			return isInGame() && arena.contains(context.players.getLocal());
-		}
+        @Override
+        public boolean activate() {
+            return isInGame() && arena.contains(context.players.getLocal());
+        }
 
-	}
+    }
 
-	private class EquipArrows extends Worker {
+    private class EquipArrows extends Worker {
 
-		public EquipArrows(MethodContext context) {
-			super(context);
-			// TODO Auto-generated constructor stub
-		}
+        public EquipArrows(MethodContext context) {
+            super(context);
+            // TODO Auto-generated constructor stub
+        }
 
-		@Override
-		public void work() {
-			process = "Equipping Arrows";
-			context.inventory.getItem(882).click();
-			Time.sleep(1000, 1200);
-		}
+        @Override
+        public void work() {
+            process = "Equipping Arrows";
+            context.inventory.getItem(882).click();
+            Time.sleep(1000, 1200);
+        }
 
-		@Override
-		public boolean validate() {
-			return context.inventory.contains(882);
-		}
+        @Override
+        public boolean validate() {
+            return context.inventory.contains(882);
+        }
 
-	}
+    }
 
-	private class ShootTarget extends Worker {
+    private class ShootTarget extends Worker {
 
-		public ShootTarget(MethodContext context) {
-			super(context);
-			// TODO Auto-generated constructor stub
-		}
+        public ShootTarget(MethodContext context) {
+            super(context);
+            // TODO Auto-generated constructor stub
+        }
 
-		@Override
-		public void work() {
-			process = "Shooting Target";
-			GameObject target = context.gameObjects.getNearest("Target");
-			if (target == null) {
-				return;
-			}
-			if (target.isVisible()) {
-				target.click();
-				Time.sleep(200, 500);
-			} else {
-				context.camera.turnTo(target);
-				context.camera.setPitch(false);
-			}
-		}
+        @Override
+        public void work() {
+            process = "Shooting Target";
+            GameObject target = context.gameObjects.getNearest("Target");
+            if (target == null) {
+                return;
+            }
+            if (target.isVisible()) {
+                target.click();
+                Time.sleep(200, 500);
+            } else {
+                context.camera.turnTo(target);
+                context.camera.setPitch(false);
+            }
+        }
 
-		@Override
-		public boolean validate() {
-			return getArrowNum() > 0 && getArrowNum() < 11
-					&& !context.widgets.getChild(325, 89).isVisible();
-		}
+        @Override
+        public boolean validate() {
+            return getArrowNum() > 0 && getArrowNum() < 11
+                    && !context.widgets.getChild(325, 89).isVisible();
+        }
 
-	}
+    }
 
-	private class CloseTarget extends Worker {
+    private class CloseTarget extends Worker {
 
-		public CloseTarget(MethodContext context) {
-			super(context);
-		}
+        public CloseTarget(MethodContext context) {
+            super(context);
+        }
 
-		@Override
-		public void work() {
-			process = "Closing Target";
-			context.widgets.getChild(325, 88).click();
-			Time.sleep(500, 800);
-		}
+        @Override
+        public void work() {
+            process = "Closing Target";
+            context.widgets.getChild(325, 88).click();
+            Time.sleep(500, 800);
+        }
 
-		@Override
-		public boolean validate() {
-			return getArrowNum() > 0
-					&& context.widgets.getChild(325, 88).isVisible();
-		}
+        @Override
+        public boolean validate() {
+            return getArrowNum() > 0
+                    && context.widgets.getChild(325, 88).isVisible();
+        }
 
-	}
+    }
 
-	private class GetPrize extends Worker {
+    private class GetPrize extends Worker {
 
-		public GetPrize(MethodContext context) {
-			super(context);
-		}
+        public GetPrize(MethodContext context) {
+            super(context);
+        }
 
-		@Override
-		public void work() {
-			process = "Getting Prize";
-			Npc judge = context.npcs.getNearest("Competition Judge");
-			if (judge == null) {
-				return;
-			}
-			if (judge.isVisible()) {
-				judge.click();
-			} else {
-				context.camera.turnTo(judge);
-			}
-			Time.sleep(500, 800);
-		}
+        @Override
+        public void work() {
+            process = "Getting Prize";
+            Npc judge = context.npcs.getNearest("Competition Judge");
+            if (judge == null) {
+                return;
+            }
+            if (judge.isVisible()) {
+                judge.click();
+            } else {
+                context.camera.turnTo(judge);
+            }
+            Time.sleep(500, 800);
+        }
 
-		@Override
-		public boolean validate() {
-			return getArrowNum() == 11
-					&& !context.widgets.getChild(325, 89).isVisible();
-		}
+        @Override
+        public boolean validate() {
+            return getArrowNum() == 11
+                    && !context.widgets.getChild(325, 89).isVisible();
+        }
 
-	}
-
+    }
 
 
 }

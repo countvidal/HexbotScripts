@@ -107,7 +107,6 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                     PathFinder p = new PathFinder(context);
                     Tile closest = getClosestOnZone(spot.getCentralTile());
                     Tile[] pathFromSpot = p.findPath(context.players.getLocal().getLocation(),closest);
-                    System.out.println(pathFromSpot[0].toString()+" "+pathFromSpot[1].toString());
                     if ((spot.getNearest(context.players.getLocal())) != null) {
                         context.walking.walk(pathFromSpot);
                     } else {
@@ -672,7 +671,7 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
 
     private final int LOOKING = 0, WALKING_TO_FISHING_SPOT = 1,
             STARTING_FISHING = 2, FISHING = 3, WALKING_TO_BANK = 4,
-            BANKING = 5, WALKING_FROM_BANK = 6, DROPPING = 7;
+            BANKING = 5, WALKING_FROM_BANK = 6, DROPPING = 7, LOSTGEAR = 8;
     // Fishing supplies IDs
     private final int NET = 303, NORMAL_POLE = 307, FLYING_POLE = 309,
             HARPOON = 311, POT = 301, CRAYCAGE = 13431, BAIT = 313,
@@ -1155,17 +1154,19 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
         if (timerUsed && timePassed(timeToStop)) {
            stopScript("Time passed.", true);
         }
-        if (!barbarianMode && gear != null) {
+        if (!barbarianMode && gear != null &&  context.groundItems.getNearest(gear[0]) == GroundItem.EMPTY) {
             if ((context.inventory.getCount(gear[0]) == 0
                     && (!(context.equipment.getItem(Equipment.Slot.WEAPON).getId() == 14109 || context.equipment.getItem(Equipment.Slot.WEAPON).getId() == 10129) || gear != HARP_FISHING))
-                    || gear.length > 1 && !hasBait()) {
+                    || (gear.length > 1 && !hasBait())) {
                 stopScript("Out of fishing supplies.", true);
             }
         }
         if (stopScript) {
             stopScript("Script ended.", false);
         }
-        if (context.bank.isOpen() && state != WALKING_FROM_BANK) {
+        if(context.inventory.getCount(gear[0]) == 0 &&  context.groundItems.getNearest(gear[0]) != GroundItem.EMPTY){
+            state = LOSTGEAR;
+        }else if (context.bank.isOpen() && state != WALKING_FROM_BANK) {
             state = BANKING;
         } else if (context.inventory.isFull() && state != BANKING
                 && state != WALKING_TO_BANK) {
@@ -1211,12 +1212,23 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
             state = FISHING;
         }
         switch (state) {
+            case LOSTGEAR:
+                int id = gear[0];
+                GroundItem z = context.groundItems.getNearest(id);
+                if(z.isVisible()){
+                    if(z.interact("Take")){
+                        state = LOOKING;
+                    }
+                } else {
+                    context.walking.walk(z);
+                }
+                break;
             case LOOKING:
-                if ((fishingSpotNpc = getBestFishingSpot(fishingAction)) != null) {
+                if ((fishingSpotNpc = getBestFishingSpot(fishingAction)) != Npc.EMPTY) {
                     fishingSpotLocation = fishingSpotNpc.getLocation();
-                    if (!fishingSpotNpc.isVisible()) {
+                    if (!fishingSpotNpc.isVisible() && fishingSpotNpc != Npc.EMPTY) {
                         context.camera.turnTo(fishingSpotNpc);
-                        if (!fishingSpotNpc.isVisible()) {
+                        if (!fishingSpotNpc.isVisible() && fishingSpotNpc != Npc.EMPTY) {
                             state = WALKING_TO_FISHING_SPOT;
                         } else {
                             state = STARTING_FISHING;
@@ -1643,6 +1655,8 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                 stateText = "Depositing";
             } else if (state == WALKING_FROM_BANK) {
                 stateText = "Walking back";
+            }else if (state == LOSTGEAR) {
+                stateText = "Picking up Gear";
             }
             drawTextRight(stateText, 160, g);
             // Average exp/hour
@@ -1762,6 +1776,14 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
             System.out.println(reason + " Stopping script and logging out.");
             while (context.bank.isOpen()) {
                 context.bank.close();
+            }
+            if(context.tabs.isOpen(Tabs.Tab.EXIT)){
+                context.widgets.getChild(182,6).click();
+            }
+            if(context.tabs.open(Tabs.Tab.EXIT)){
+            context.widgets.getChild(182,6).click();
+            } else {
+                stopScript(reason,logout);
             }
             while (context.client.getLoginState() == -1) {
                 System.out.println("out");

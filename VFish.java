@@ -33,7 +33,7 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
     Date pressedTime;
     long timeClicked;
 
-    public VFish(MethodContext context){
+    public VFish(MethodContext context) {
         super(context);
     }
 
@@ -65,7 +65,7 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
 
     @Override
     public void onMessageReceived(int i, String s, String s2) {
-        if(i == 0 && s2.contains("You catch")){
+        if (i == 0 && s2.contains("You catch")) {
             fishCount++;
         }
     }
@@ -101,12 +101,12 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
             this.bankID = bankID;
             bankOp = new BankingOperation() {
                 public boolean walkFromBank() {
-                    if(spot == null){
+                    if (spot == null) {
                         return false;
                     }
                     PathFinder p = new PathFinder(context);
                     Tile closest = getClosestOnZone(spot.getCentralTile());
-                    Tile[] pathFromSpot = p.findPath(context.players.getLocal().getLocation(),closest);
+                    Tile[] pathFromSpot = p.findPath(context.players.getLocal().getLocation(), closest);
                     if ((spot.getNearest(context.players.getLocal())) != null) {
                         context.walking.walk(pathFromSpot);
                     } else {
@@ -116,12 +116,12 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                 }
 
                 public boolean walkToBank() {
-                    if(bank == null){
+                    if (bank == null) {
                         return false;
                     }
                     PathFinder p = new PathFinder(context);
                     Tile closest = getClosestOnZone(bank.getCentralTile());
-                    Tile[] pathFromSpot = p.findPath(context.players.getLocal().getLocation(),closest);
+                    Tile[] pathFromSpot = p.findPath(context.players.getLocal().getLocation(), closest);
                     if ((bank.getNearest(context.players.getLocal())) != null) {
                         context.walking.walk(pathFromSpot);
                     } else {
@@ -132,10 +132,10 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
 
                 private Tile getClosestOnZone(Tile tile) {
                     Tile closest = context.players.getLocal().getLocation();
-                    for(int i = context.client.getBaseX(); i < (context.client.getBaseX()+101); i++ ){
-                        for(int n = context.client.getBaseY(); n < (context.client.getBaseY()+101); n++ ){
-                            Tile tmp = new Tile(i,n);
-                            if(context.walking.canReach(tmp) && context.calculations.distanceBetween(tmp,tile) < context.calculations.distanceBetween(closest,tile)){
+                    for (int i = context.client.getBaseX(); i < (context.client.getBaseX() + 101); i++) {
+                        for (int n = context.client.getBaseY(); n < (context.client.getBaseY() + 101); n++) {
+                            Tile tmp = new Tile(i, n);
+                            if (context.walking.canReach(tmp) && context.calculations.distanceBetween(tmp, tile) < context.calculations.distanceBetween(closest, tile)) {
                                 closest = tmp;
                             }
                         }
@@ -211,10 +211,10 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
             fishingAction = fs.option;
             bankArea = fs.bank;
             fishingArea = fs.spot;
-           // bankID = fs.bankID;
-           // isBankPiscBanker = bankID == 3824;
-           // isBankBanker = bankID == 499 || bankID == 494;
-           // isBankRasolo = bankID == 1972;
+            // bankID = fs.bankID;
+            // isBankPiscBanker = bankID == 3824;
+            // isBankBanker = bankID == 499 || bankID == 494;
+            // isBankRasolo = bankID == 1972;
             check = getFishingCheck((String) fishBox.getSelectedItem());
             if (lastLocation != locationBox.getSelectedIndex()) {
                 lastLocation = locationBox.getSelectedIndex();
@@ -842,7 +842,7 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
             "Raw tuna", // tuna
             "Leaping trout", // leaping trout
             "Leaping sturgeon", // leaping sturgeon
-           "Leaping salmon" // leaping salmon
+            "Leaping salmon" // leaping salmon
     };
 
     private long timeToNext;
@@ -927,9 +927,6 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
     }
 
 
-
-
-
     public void drawTextRight(final String text, final int y, final Graphics g) {
         final FontMetrics fontMetrics = g.getFontMetrics(g.getFont());
         final Rectangle2D rectangle = fontMetrics.getStringBounds(text, g);
@@ -975,9 +972,9 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                     if (!ids.equals(id)) {
                         continue;
                     }
-                    if(fishingSpotID != -1 && Monster.getId() != -1){
-                        if(fishingSpotID  != Monster.getId()){
-                        continue;
+                    if (fishingSpotID != -1 && Monster.getId() != -1) {
+                        if (fishingSpotID != Monster.getId()) {
+                            continue;
                         }
                     }
 
@@ -987,7 +984,7 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                         Dist = distance;
                         closest = Monster;
                     }
-                    if(fishingSpotID == -1 && Monster.getId() != -1){
+                    if (fishingSpotID == -1 && Monster.getId() != -1) {
                         fishingSpotID = Monster.getId();
                     }
                 }
@@ -1083,8 +1080,8 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
 
     public boolean hasSpotMoved() {
         Character bram = context.players.getLocal().getInteracting();
-        int ID =  bram instanceof Npc ? ((Npc) bram).getId() : -1;
-        if(ID != fishingSpotID && ID != -1){
+        int ID = bram instanceof Npc ? ((Npc) bram).getId() : -1;
+        if (ID != fishingSpotID && ID != -1) {
             return true;
         }
         if (fishingSpotNpc == Npc.EMPTY || fishingSpotLocation == Tile.EMPTY) {
@@ -1130,7 +1127,7 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
     @Override
     public int loop() {
         if (notBefore/*
-										 * && !(context.widgets.getChild(378) .isValid()
+                                         * && !(context.widgets.getChild(378) .isValid()
 										 * && !context.widgets.getChild(378)
 										 * .getChild(89
 										 * ).getText().contains("10.1120.190"))
@@ -1152,21 +1149,24 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
             return 500;
         }
         if (timerUsed && timePassed(timeToStop)) {
-           stopScript("Time passed.", true);
+            stopScript("Time passed.", true);
+            stop();
         }
-        if (!barbarianMode && gear != null &&  context.groundItems.getNearest(gear[0]) == GroundItem.EMPTY) {
+        if (!barbarianMode && gear != null && context.groundItems.getNearest(gear[0]) == GroundItem.EMPTY) {
             if ((context.inventory.getCount(gear[0]) == 0
                     && (!(context.equipment.getItem(Equipment.Slot.WEAPON).getId() == 14109 || context.equipment.getItem(Equipment.Slot.WEAPON).getId() == 10129) || gear != HARP_FISHING))
                     || (gear.length > 1 && !hasBait())) {
                 stopScript("Out of fishing supplies.", true);
+                stop();
             }
         }
         if (stopScript) {
             stopScript("Script ended.", false);
+            stop();
         }
-        if(context.inventory.getCount(gear[0]) == 0 &&  context.groundItems.getNearest(gear[0]) != GroundItem.EMPTY){
+        if (context.inventory.getCount(gear[0]) == 0 && context.groundItems.getNearest(gear[0]) != GroundItem.EMPTY) {
             state = LOSTGEAR;
-        }else if (context.bank.isOpen() && state != WALKING_FROM_BANK) {
+        } else if (context.bank.isOpen() && state != WALKING_FROM_BANK) {
             state = BANKING;
         } else if (context.inventory.isFull() && state != BANKING
                 && state != WALKING_TO_BANK) {
@@ -1174,7 +1174,7 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                 while (context.inventory.getItem(new Filter<InventoryItem>() {
 
                     public boolean accept(final InventoryItem a) {
-                        if(a == null){
+                        if (a == null) {
                             return false;
                         }
                         if (a.getId() == gear[0] || a.getId() == 371) {
@@ -1183,12 +1183,12 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                         return true;
                     }
                 }) != null) {
-                    if(context.inventory.isItemSelected()){
+                    if (context.inventory.isItemSelected()) {
                         context.mouse.click(true);
                     }
                     InventoryItem a = context.inventory.getItem(new Filter<InventoryItem>() {
                         public boolean accept(final InventoryItem a) {
-                            if(a == null){
+                            if (a == null) {
                                 return false;
                             }
                             if (a.getId() == gear[0] || a.getId() == 371) {
@@ -1197,7 +1197,7 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                             return true;
                         }
                     });
-                    if(!a.getName().equals("")){
+                    if (!a.getName().equals("")) {
                         a.drop();
                     } else {
                         break;
@@ -1215,12 +1215,16 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
             case LOSTGEAR:
                 int id = gear[0];
                 GroundItem z = context.groundItems.getNearest(id);
-                if(z.isVisible()){
-                    if(z.interact("Take")){
-                        state = LOOKING;
+                if (z != GroundItem.EMPTY) {
+                    if (z.isVisible()) {
+                        if (z.interact("Take")) {
+                            state = LOOKING;
+                        }
+                    } else {
+                        context.walking.walk(z);
                     }
                 } else {
-                    context.walking.walk(z);
+                    state = LOOKING;
                 }
                 break;
             case LOOKING:
@@ -1231,15 +1235,15 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                         context.camera.turnTo(fishingSpotNpc);
                         if (!fishingSpotNpc.isVisible() && fishingSpotNpc != Npc.EMPTY) {
                             state = WALKING_TO_FISHING_SPOT;
-                        } else {
+                        } else if (fishingSpotNpc.isVisible()) {
                             state = STARTING_FISHING;
                         }
-                    } else {
+                    } else if (fishingSpotNpc.isVisible()) {
                         state = STARTING_FISHING;
                     }
-                }  else if (fishingArea.contains(context.players.getLocal())) {
+                } else if (fishingArea.contains(context.players.getLocal())) {
                     context.walking.walk(fishingArea.getCentralTile());
-                }  else if (!fishingArea.contains(context.players.getLocal())) {
+                } else if (!fishingArea.contains(context.players.getLocal())) {
                     context.walking.walk(fishingArea.getCentralTile());
                 }
                 break;
@@ -1253,7 +1257,7 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                 state = STARTING_FISHING;
                 break;
             case STARTING_FISHING:
-                if (hasSpotMoved() || fishingSpotNpc == null) {
+                if (hasSpotMoved() || fishingSpotNpc == null || fishingSpotNpc == Npc.EMPTY) {
                     state = LOOKING;
                     break;
                 }
@@ -1269,7 +1273,7 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                     }
                 }
                 if (fishingSpotNpc.interact(fishingAction)
-                       // + " Fishing spot")
+                        // + " Fishing spot")
                         && context.calculations.distanceTo(fishingSpotLocation) == 1) {
                     waitToStop();
                     state = FISHING;
@@ -1319,9 +1323,14 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                     break;
                 }
                 final GameObject bankBooth = context.gameObjects.getNearest("Bank booth");
-                final Npc bankNpc = context.npcs.getNearest("Banker","Rasolo");
-                if (isBankRasolo && bankNpc != null
-                        && bankNpc.isVisible()) {
+                final Npc bankNpc = context.npcs.getNearest("Banker", "Rasolo");
+                if (bankNpc != Npc.EMPTY && bankNpc.getName().equals("Rasolo")) {
+                    isBankBanker = false;
+                    isBankRasolo = true;
+                } else {
+                    isBankRasolo = false;
+                }
+                if (isBankRasolo && bankNpc != null) {
                     if (!bankNpc.isVisible()) {
                         context.walking.walk(bankNpc.getLocation());
                     }
@@ -1329,7 +1338,7 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                         break;
                     }
                     //bankNpc.interact("trade rasolo");
-                    bankNpc.interact("trade");
+                    bankNpc.interact("Trade");
                     if (Time.waitFor(new Condition() {
                         public boolean accept() {
                             return !context.players.getLocal().isMoving();
@@ -1338,21 +1347,21 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                         waitToStop();
                     }
                     Time.sleep(100, 200);
-                    if (context.widgets.getChild(620, 22).getText()
+                    if (context.widgets.getChild(300, 76).getText()
                             .contains("Rasolo the Wandering")) {
                         while (context.inventory.contains("raw salmon")) {
-                            context.inventory.getItem("raw salmon").interact("sell 50 raw salmon");
+                            context.inventory.getItem("raw salmon").interact("sell 10");
                             Time.sleep(800, 1000);
                         }
                         while (context.inventory.contains("raw trout")) {
-                            context.inventory.getItem("raw trout").interact("sell 50 raw trout");
+                            context.inventory.getItem("raw trout").interact("sell 10");
                             Time.sleep(800, 1000);
                         }
                         while (context.inventory.contains("raw pike")) {
-                            context.inventory.getItem("raw pike").interact("sell 50 raw pike");
+                            context.inventory.getItem("raw pike").interact("sell 10");
                             Time.sleep(800, 1000);
                         }
-                        while (context.widgets.getChild(620, 22).getText()
+                        while (context.widgets.getChild(300, 76).getText()
                                 .contains("Rasolo the Wandering")) {
                             context.mouse.click(Random.nextInt(478, 494),
                                     Random.nextInt(34, 50), true);
@@ -1363,7 +1372,7 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                 } else if (bankBooth != null && !isBankBanker && !isBankPiscBanker
                         || bankNpc != null && (isBankBanker || isBankPiscBanker)) {
                     if (!bankArea.contains(context.players.getLocal())
-                           ) {
+                            ) {
                         state = WALKING_TO_BANK;
                         break;
                     }
@@ -1378,7 +1387,7 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                     }
                     if (!context.bank.isOpen()) {
                         if (isBankPiscBanker) {
-                            if(bankNpc.interact("bank")){
+                            if (bankNpc.interact("bank")) {
                                 Time.waitFor(new Condition() {
                                     @Override
                                     public boolean accept() {
@@ -1388,7 +1397,7 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                             }
                         } else if (isBankBanker) {
                             //bankNpc.interact("bank banker");
-                            if(bankNpc.interact("bank")){
+                            if (bankNpc.interact("bank")) {
                                 Time.waitFor(new Condition() {
                                     @Override
                                     public boolean accept() {
@@ -1397,7 +1406,7 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                                 }, 1000);
                             }
                         } else {
-                            if(bankBooth.interact("bank")){
+                            if (bankBooth.interact("bank")) {
                                 Time.waitFor(new Condition() {
                                     @Override
                                     public boolean accept() {
@@ -1484,7 +1493,7 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
 
                             public boolean accept(final InventoryItem a) {
                                 for (int i = 0; i < gear.length; i++) {
-                                    if(a == null){
+                                    if (a == null) {
                                         return false;
                                     }
                                     if (a.getId() == gear[i]) {
@@ -1494,12 +1503,12 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                                 return true;
                             }
                         }) != null) {
-                            if(context.inventory.isItemSelected()){
+                            if (context.inventory.isItemSelected()) {
                                 context.mouse.click(true);
                             }
                             InventoryItem a = context.inventory.getItem(new Filter<InventoryItem>() {
                                 public boolean accept(final InventoryItem a) {
-                                    if(a == null){
+                                    if (a == null) {
                                         return false;
                                     }
                                     for (int i = 0; i < gear.length; i++) {
@@ -1510,7 +1519,7 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                                     return true;
                                 }
                             });
-                            if(!a.getName().equals("")){
+                            if (!a.getName().equals("")) {
                                 a.drop();
                             } else {
                                 break;
@@ -1657,7 +1666,7 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
                 stateText = "Depositing";
             } else if (state == WALKING_FROM_BANK) {
                 stateText = "Walking back";
-            }else if (state == LOSTGEAR) {
+            } else if (state == LOSTGEAR) {
                 stateText = "Picking up Gear";
             }
             drawTextRight(stateText, 160, g);
@@ -1779,13 +1788,13 @@ public class VFish extends AbstractScript implements RenderEvent, MouseMotionLis
             while (context.bank.isOpen()) {
                 context.bank.close();
             }
-            if(context.tabs.isOpen(Tabs.Tab.EXIT)){
-                context.widgets.getChild(182,6).click();
+            if (context.tabs.isOpen(Tabs.Tab.EXIT)) {
+                context.widgets.getChild(182, 6).click();
             }
-            if(context.tabs.open(Tabs.Tab.EXIT)){
-            context.widgets.getChild(182,6).click();
+            if (context.tabs.open(Tabs.Tab.EXIT)) {
+                context.widgets.getChild(182, 6).click();
             } else {
-                stopScript(reason,logout);
+                stopScript(reason, logout);
             }
             while (context.client.getLoginState() == -1) {
                 System.out.println("out");
